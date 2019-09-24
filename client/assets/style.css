@@ -1,0 +1,17 @@
+.html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Helvetica', sans-serif;
+    font-weight: 400;
+    font-size: 1vw;
+    color: #000000;
+    background-color: #f1f1f1;
+}
+
+#app {
+    font-size: 1.1em;
+}

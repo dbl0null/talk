@@ -1,0 +1,44 @@
+server_names_hash_bucket_size  64;
+
+server {
+    server_name dbl0null.hest;
+    root /var/www/talk/static;
+    index index.html;
+
+    access_log /var/log/nginx/talk.access.log;
+    error_log /var/log/nginx/talk.error.log;
+
+    location ~ \d\.bundle\.js {
+        if ($http_cookie !~ '0bundle-key=86cb69bd9ee1a57bccb873d805c4926f') {
+            return 404;
+        }
+        try_files $uri $uri/ =404;
+    }
+
+    location ^~ /.well-known/acme-challenge/ {
+        auth_basic off;
+    }
+
+    location / {
+        try_files $uri $uri/ =404;
+        auth_basic "";
+        auth_basic_user_file /etc/nginx/.htpasswd;
+    }
+
+    location /streams {
+        proxy_pass    http://localhost:10500;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 86400s;
+        proxy_send_timeout 86400s;
+    }
+}
+server {
+    listen 80;
+    listen [::]:80;
+    server_name dbl0null.hest;
+}
